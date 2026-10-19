@@ -43,8 +43,8 @@ JDK 17 или новее. Для лабораторной 3 дополнител
 **Лабораторная 1** (из папки `airp/lab1`):
 
 ```bash
-javac -encoding UTF-8 -d out src/web_res_lab/Web_res_lab.java
-java -Dfile.encoding=UTF-8 -cp out web_res_lab.Web_res_lab
+javac -encoding UTF-8 -cp "lib/*" -d out src/web_res_lab/Web_res_lab.java
+java -Dfile.encoding=UTF-8 -cp "out;lib/*" web_res_lab.Web_res_lab   # Windows; на Mac/Linux: -cp "out:lib/*"
 ```
 
 **Лабораторная 2** (из папки `airp/lab2`): готовый `serv.jar`, скрипты для Windows, Mac и Linux (WSL):
