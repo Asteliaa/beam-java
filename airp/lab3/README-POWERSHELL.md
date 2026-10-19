@@ -1,0 +1,81 @@
+# Лаба 3 (вариант 3, музыка Моцарта): запуск через PowerShell
+
+Одна команда скачивает проект, Maven и Tomcat 9, собирает сервер и клиент, запускает всё и открывает браузер.
+
+## Запуск
+
+Нужен только Windows с PowerShell и интернетом (остальное скрипт поставит сам).
+
+1. Получите код с вариантом 3. Пока PR не принят, он лежит в ветке `lab3-variant3-mozart`:
+
+```powershell
+git clone -b lab3-variant3-mozart https://github.com/Asteliaa/beam-java.git
+cd beam-java\airp\lab3
+```
+
+После принятия PR достаточно обычного `git clone` репозитория и `cd beam-java\airp\lab3`. Без git: скачать zip ветки https://github.com/Asteliaa/beam-java/archive/refs/heads/lab3-variant3-mozart.zip, распаковать и открыть папку `airp\lab3`.
+
+2. Находясь в папке `airp\lab3`, выполните:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\setup-and-run.ps1
+```
+
+Дальше скрипт сам:
+
+1. Находит JDK (если нет, ставит JDK 17 через `winget`).
+2. Скачивает Maven 3.9.9 и Tomcat 9.0.98 в `C:\lab3\tools` (около 25 МБ). Проект берёт из текущей папки.
+3. Собирает сервер `lab_servlet` и копирует WAR в Tomcat.
+4. Запускает Tomcat в отдельном окне и ждёт, пока сервер ответит.
+5. Открывает http://localhost:8080/lab_servlet/ в браузере.
+6. Собирает и открывает окно клиента «Словарь (клиент)».
+
+Первый запуск занимает 2–5 минут. Повторный быстрее: скачанное не качается заново.
+
+## Параметры
+
+| Параметр | Что делает | Пример |
+|---|---|---|
+| `-Root` | другая папка установки (по умолчанию `C:\lab3`) | `-Root D:\lab3` |
+| `-NoClient` | не запускать окно клиента | `-NoClient` |
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\setup-and-run.ps1 -Root D:\lab3 -NoClient
+```
+
+## Что проверить в браузере
+
+| Действие | Ожидаемо |
+|---|---|
+| «привет» → Перевести | `привет - hello` |
+| `book` → Перевести обратно | `book - книга` |
+| «мышь» | «Слово «мышь» не найдено» |
+| «Показать рисунок» | картинка |
+| **«Включить музыку»** | открывается `.../MusicServlet`, сразу играет Моцарт |
+
+Звук включается по нажатию кнопки: браузеры не проигрывают звук сами при загрузке страницы.
+
+## Остановка
+
+```powershell
+$env:JAVA_HOME = "C:\Program Files\Java\jdk-24"   # путь к вашему JDK
+C:\lab3\tools\apache-tomcat-9.0.98\bin\shutdown.bat
+```
+
+Либо просто закройте окно Tomcat.
+
+## Если не работает
+
+| Симптом | Решение |
+|---|---|
+| «Порт 8080 занят» | закройте программу на 8080 (старый Tomcat, Jetty) и запустите снова |
+| «выполнение скриптов отключено» | запускайте именно командой с `-ExecutionPolicy Bypass`, как выше |
+| «Нужен JDK, а найдена только JRE» | установите JDK 17+: `winget install EclipseAdoptium.Temurin.17.JDK`, перезапустите PowerShell |
+| Maven печатает много `WARNING` | это безвредные предупреждения новой Java, на работу не влияют |
+| Сервер не поднялся | смотрите окно Tomcat и `C:\lab3\tools\apache-tomcat-9.0.98\logs` |
+| Клиент: «Connection refused» | Tomcat не запущен |
+| Музыка не играет | проверьте звук и нажмите кнопку; откройте `.../MusicServlet` напрямую |
+
+## Свой музыкальный файл
+
+В проекте лежит синтезированный `mozart.wav` (начало «Eine kleine Nachtmusik»). Чтобы подставить настоящую запись, замените `lab_servlet\src\main\webapp\music\mozart.wav` в папке `airp\lab3` и запустите скрипт заново. Для mp3 нужно ещё поменять путь и тип `audio/mpeg` в `MusicServlet.java`.
