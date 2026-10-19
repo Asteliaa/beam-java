@@ -1,5 +1,4 @@
 @echo off
-set JAVA_HOME=E:\tools\jdk17
-set CATALINA_HOME=E:\tools\apache-tomcat-9.0.122
-call "%CATALINA_HOME%\bin\shutdown.bat"
+chcp 65001 > nul
+powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0setup-and-run.ps1" -Stop
 pause
