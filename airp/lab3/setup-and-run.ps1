@@ -106,7 +106,7 @@ Write-Host "Запускаю Tomcat..."
 Start-Process -FilePath "$Cat\bin\catalina.bat" -ArgumentList "run" -WorkingDirectory $Cat
 
 $ok = $false
-for ($i = 0; $i -lt 40; $i++) {
+for ($i = 0; $i -lt 120; $i++) {
     Start-Sleep 2
     try { if ((Invoke-WebRequest "http://localhost:8080/lab_servlet/" -UseBasicParsing).StatusCode -eq 200) { $ok = $true; break } } catch {}
 }
